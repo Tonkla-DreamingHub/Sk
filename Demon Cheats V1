@@ -28,7 +28,7 @@ local Window = Rayfield:CreateWindow({
       Note = "Buy key from Demon Cheats team",
       FileName = "Key",
       SaveKey = true,
-      GrabKeyFromSite = false,
+      GrabKeyFromSite = true,
       Key = {"DEMON-GHVI"}
    }
 })
@@ -369,4 +369,4 @@ player.CharacterAdded:Connect(function(c)
     Rayfield:LoadConfiguration()
 end)
 
-Rayfield:Notify({Title="โหลดสำเร็จ!", Content="พร้อมลุย ไลฟ์สาระ ไปวันๆ!", Duration=4, Image=6026568198})
+Rayfield:Notify({Title="successful load!", Content="Let's fun with Demon Cheats!", Duration=4, Image=6026568198})
