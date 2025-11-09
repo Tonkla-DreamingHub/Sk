@@ -28,7 +28,7 @@ local Window = Rayfield:CreateWindow({
       Note = "Buy key from Demon Cheats team",
       FileName = "Key",
       SaveKey = true,
-      GrabKeyFromSite = false,
+      GrabKeyFromSite = true,
       Key = {"DEMON-GHVI"}
    }
 })
