@@ -29,7 +29,7 @@ local Window = Rayfield:CreateWindow({
       FileName = "Key",
       SaveKey = true,
       GrabKeyFromSite = true,
-      Key = {"DEMON-GHVI"}
+      Key = {"DEMON-GHVI"} {"DEMON-CM1D"}
    }
 })
 
