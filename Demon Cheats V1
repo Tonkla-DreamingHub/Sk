@@ -68,7 +68,7 @@ local function startFlying()
     if flying then return end
     flying = true
     humanoid.PlatformStand = true
-    vv = Instance.new("BodyVelocity")
+    creditTab2zalazala Instance.new("BodyVelocity")
     vv.MaxForce = Vector3.new(1e5,1e5,1e5)
     vv.P = 1250
     vv.Velocity = Vector3.zero
@@ -298,11 +298,10 @@ updateTab:CreateLabel("v1.4 - แก้บั๊ก Respawn, Noclip, Fly")
 updateTab:CreateLabel("v1.3.6 - แก้บั๊กเต็มรูปแบบ")
 
 local creditTab2 = Window:CreateTab("เครดิต", 6034989579)
-creditTab2:CreateLabel("owner by livezala")
-creditTab2:CreateLabel("original script by dion_ktl")
-creditTab2:CreateLabel("พัฒนาต่อโดย thomas (โทมัส)")
+creditTab2:CreateLabel("owner by DemonScripts")
+creditTab2:CreateLabel("original script by DemonScripts channel")
+creditTab2:CreateLabel("พัฒนาต่อโดย Demon Cheats team")
 creditTab2:CreateLabel("อัพเดต 31/10/2025")
-creditTab2:CreateLabel("Discord: dSyCsRpU62")
 
 -- === เคาท์ดาวน์ปีใหม่ ===
 local newYearTab = Window:CreateTab("เคาท์ดาวน์ปีใหม่", 6034979821)
