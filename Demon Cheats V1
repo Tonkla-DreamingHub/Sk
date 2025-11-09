@@ -28,7 +28,7 @@ local Window = Rayfield:CreateWindow({
       Note = "Buy key from Demon Cheats team",
       FileName = "Key",
       SaveKey = true,
-      GrabKeyFromSite = true,
+      GrabKeyFromSite = false,
       Key = {"DEMON-GHVI"}
    }
 })
@@ -68,7 +68,7 @@ local function startFlying()
     if flying then return end
     flying = true
     humanoid.PlatformStand = true
-    creditTab2zalazala Instance.new("BodyVelocity")
+    vv = Instance.new("BodyVelocity")
     vv.MaxForce = Vector3.new(1e5,1e5,1e5)
     vv.P = 1250
     vv.Velocity = Vector3.zero
