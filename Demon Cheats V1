@@ -4,7 +4,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
    Name = "Demon Cheats V1",
    Icon = 0,
-   LoadingTitle = "By DemonScripts channel ",
+   LoadingTitle = "By DemonScripts channel",
    LoadingSubtitle = "Demon Cheats team",
    ShowText = "Rayfield",
    Theme = "DarkBlue",
@@ -23,10 +23,10 @@ local Window = Rayfield:CreateWindow({
    },
    KeySystem = true,
    KeySettings = {
-      Title = "Key",
-      Subtitle = "Paid key",
-      Note = "Buy key from Demon Cheats team",
-      FileName = "Key",
+      Title = "ระบบคีย์",
+      Subtitle = "ไปหาซื้อคีย์มาใส่",
+      Note = "No method of obtaining the key is provided",
+      FileName = "DEMON-GHVI",
       SaveKey = true,
       GrabKeyFromSite = false,
       Key = {"DEMON-GHVI"}
@@ -302,6 +302,7 @@ creditTab2:CreateLabel("owner by DemonScripts")
 creditTab2:CreateLabel("original script by DemonScripts channel")
 creditTab2:CreateLabel("พัฒนาต่อโดย Demon Cheats team")
 creditTab2:CreateLabel("อัพเดต 31/10/2025")
+creditTab2:CreateLabel("Discord: dSyCsRpU62")
 
 -- === เคาท์ดาวน์ปีใหม่ ===
 local newYearTab = Window:CreateTab("เคาท์ดาวน์ปีใหม่", 6034979821)
@@ -368,4 +369,4 @@ player.CharacterAdded:Connect(function(c)
     Rayfield:LoadConfiguration()
 end)
 
-Rayfield:Notify({Title="Load Successful", Content="Let's fun with Demon Cheats!", Duration=4, Image=6026568198})
+Rayfield:Notify({Title="Load Successful!", Content="Let's fun with Demon Cheats!", Duration=4, Image=6026568198})
