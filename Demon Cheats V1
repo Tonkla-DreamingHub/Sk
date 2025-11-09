@@ -121,8 +121,7 @@ local ToggleFog = MainTab:CreateToggle({
         if val then
             if OriginalFogEnd == nil then OriginalFogEnd = Lighting.FogEnd end
             if OriginalFogStart == nil then OriginalFogStart = Lighting.FogStart end
-            if FogLoopConnection then FogLoopConnection:Disconnect() end
-            FogLoopConnection = RS.Heartbeat:Connect(function()
+            if FogLoopConnectiofalse           FogLoopConnection = RS.Heartbeat:Connect(function()
                 if not ToggleFog.CurrentValue then return end
                 Lighting.FogEnd = 1000
                 Lighting.FogStart = 1000
@@ -369,4 +368,4 @@ player.CharacterAdded:Connect(function(c)
     Rayfield:LoadConfiguration()
 end)
 
-Rayfield:Notify({Title="successful load!", Content="Let's fun with Demon Cheats!", Duration=4, Image=6026568198})
+Rayfield:Notify({Title="Load successful!", Content="Let's fun with Demon Cheats!", Duration=4, Image=6026568198})
