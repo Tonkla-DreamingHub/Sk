@@ -4,7 +4,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
    Name = "Demon Cheats V2",
    Icon = nil,
-   LoadingTitle = "welcome to Demon Cheats V2!",
+   LoadingTitle = "Let's fun with Demon Cheats V2!",
    LoadingSubtitle = "Demon Cheats team",
    ShowText = "Rayfield",
    Theme = "DarkBlue",
@@ -23,8 +23,8 @@ local Window = Rayfield:CreateWindow({
    },
    KeySystem = true,
    KeySettings = {
-      Title = "Key system",
-      Subtitle = "Paid key",
+      Title = "Key System",
+      Subtitle = "Paid Key",
       Note = "Buy Key from Demon Cheats team",
       FileName = "Key",
       SaveKey = true,
@@ -86,12 +86,6 @@ local function toggleSpeed(on)
     humanoid.WalkSpeed = superSpeed and runSpeed or 16
     Rayfield:Notify({Title = superSpeed and "วิ่งเร็วเปิด" or "วิ่งเร็วปิด", Content = superSpeed and "วิ่งเร็วสุดขีด!" or "กลับสู่ความเร็วปกติ", Duration = 3, Image = 6023426921})
 end
--- ฟังก์ชันวิ่งเร็ว
-local function toggleSpeed(on)
-    superSpeed = on
-    humanoid.WalkSpeed = superSpeed and runSpeed or 16
-    Rayfield:Notify({Title = superSpeed and "วิ่งเร็วเปิด" or "วิ่งเร็วปิด", Content = superSpeed and "วิ่งเร็วสุดขีด!" or "กลับสู่ความเร็วปกติ", Duration = 3, Image = 6023426921})
-end
 
 -- === แท็บตัวละคร ===
 local MainTab = Window:CreateTab("ใช้บ่อย")
@@ -135,6 +129,7 @@ MainTab:CreateButton({
         })
     end
 })
+
 -- === แท็บวาป + ลากศพ (เวอร์ชันแยกหน้าที่เรียบร้อย) ===
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -216,6 +211,7 @@ friendTab:CreateButton({
         Rayfield:Notify({Title = "ไม่พบเป้าหมาย", Content = "เพื่อนไม่ออนไลน์/ไม่มี HRP", Duration = 3})
     end
 })
+
 -- ===== ตัวปรับค่า ลากศพ =====
 local DragOffset = 5
 local DragDelay = 0.2
@@ -290,6 +286,7 @@ friendTab:CreateButton({
         end)
     end
 })
+
 -- === แท็บวาปสถานที่ ===
 local tpTab = Window:CreateTab("วาปไปที่ต่างๆ")
 
@@ -363,8 +360,8 @@ local function refreshLocations()
             end
         end
     end
-
--- สร้างปุ่มใหม่
+    
+    -- สร้างปุ่มใหม่
     for key, data in pairs(Locations) do
         local btn = tpTab:CreateButton({
             Name = "📍 " .. data.Display,
@@ -428,6 +425,7 @@ local allWeapons = {
     "Trident", "Poison Spear", "Infernal Sword", "Cultist King Mace",
     "Obsidiron Hammer", "Scythe", "Vampire Scythe", "Old Axe", "Strong Axe", "Good Axe"
 }
+
 -- ฟังก์ชันหา Weapon (Priority)
 local function getWeapon()
     if not player:FindFirstChild("Inventory") then return nil end
@@ -477,6 +475,7 @@ killAuraTab:CreateToggle({
         })
     end,
 })
+
 -- **🚀 SLIDER ปรับความเร็วตี (ใหม่!)**
 killAuraTab:CreateSlider({
     Name = "⚡ ความเร็วตี (ต่ำ=เร็ว)",
@@ -530,6 +529,27 @@ killAuraTab:CreateButton({
         statusLabel:Set("Kills: 0 | Range: " .. killAuraRange .. " | Speed: " .. killAuraHitDelay .. "s | Weapon: Ready")
     end,
 })
+
+-- ตรวจสอบ Inventory
+killAuraTab:CreateButton({
+    Name = "📋 ตรวจสอบ Inventory (15 อาวุธ)",
+    Callback = function()
+        local inv = player:FindFirstChild("Inventory")
+        if not inv then return Rayfield:Notify({Title="❌ Error", Content="ไม่พบ Inventory", Duration=3}) end
+        
+        local found = 0
+        for _, wName in ipairs(allWeapons) do
+            if inv:FindFirstChild(wName) then found += 1 end
+        end
+        
+        Rayfield:Notify({
+            Title = "Inventory Scan",
+            Content = "พบ " .. found .. "/15 อาวุธ",
+            Duration = 4
+        })
+    end,
+})
+
 -- === Kill Aura Loop (ปรับ Speed แล้ว) ===
 task.spawn(function()
     while task.wait() do
@@ -551,7 +571,7 @@ task.spawn(function()
             if #available > 0 then weapon = available[math.random(1, #available)] end
         else
             local targetName = selectedMode:match("Only") and selectedMode:gsub(" Only", "")
-            weapon = player.Inventory:FindFirstChild(targetName)
+               weapon = player.Inventory:FindFirstChild(targetName)
         end
         
         local myChar = player.Character
@@ -612,7 +632,7 @@ extraTab:CreateButton({Name = "Infinity Yild", Callback = function() loadstring(
 
 -- === เครดิต ===
 local creditTab2 = Window:CreateTab("เครดิต")
-creditTab2:CreateLabel("owner by DemonScripts")
+creditTab2:CreateLabel("owner by DemonScripts channel")
 creditTab2:CreateLabel("original script by Demon Cheats team")
 creditTab2:CreateLabel("พัฒนาต่อโดย Demon Cheats team")
 creditTab2:CreateLabel("อัพเดต 31/10/2025")
