@@ -2,10 +2,10 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 -- สร้าง Window
 local Window = Rayfield:CreateWindow({
-   Name = "Demon Cheats V2",
+   Name = "ไลฟ์สาระ ไปวันๆ v2.0",
    Icon = nil,
-   LoadingTitle = "Let's fun with Demon Cheats V2!",
-   LoadingSubtitle = "Demon Cheats team",
+   LoadingTitle = "ยินดีต้อนรับ Power Panel v2.0 สคริปต์ของไลฟ์สาระ ไปวันๆ",
+   LoadingSubtitle = "power panel team",
    ShowText = "Rayfield",
    Theme = "DarkBlue",
    ToggleUIKeybind = "K",
@@ -21,15 +21,15 @@ local Window = Rayfield:CreateWindow({
       Invite = "noinvitelink",
       RememberJoins = true
    },
-   KeySystem = true,
+   KeySystem = false,
    KeySettings = {
-      Title = "Key System",
-      Subtitle = "Paid Key",
-      Note = "Buy Key from Demon Cheats team",
+      Title = "ระบบคีย์",
+      Subtitle = "ไปหาซื้อคีย์มาใส่",
+      Note = "No method of obtaining the key is provided",
       FileName = "Key",
       SaveKey = true,
       GrabKeyFromSite = false,
-      Key = {"DEMON-ORION"}
+      Key = {"Hello"}
    }
 })
 
@@ -571,7 +571,7 @@ task.spawn(function()
             if #available > 0 then weapon = available[math.random(1, #available)] end
         else
             local targetName = selectedMode:match("Only") and selectedMode:gsub(" Only", "")
-               weapon = player.Inventory:FindFirstChild(targetName)
+            weapon = player.Inventory:FindFirstChild(targetName)
         end
         
         local myChar = player.Character
@@ -632,9 +632,9 @@ extraTab:CreateButton({Name = "Infinity Yild", Callback = function() loadstring(
 
 -- === เครดิต ===
 local creditTab2 = Window:CreateTab("เครดิต")
-creditTab2:CreateLabel("owner by DemonScripts channel")
-creditTab2:CreateLabel("original script by Demon Cheats team")
-creditTab2:CreateLabel("พัฒนาต่อโดย Demon Cheats team")
+creditTab2:CreateLabel("owner by livezala")
+creditTab2:CreateLabel("original script by dion_ktl")
+creditTab2:CreateLabel("พัฒนาต่อโดย thomas (โทมัส)")
 creditTab2:CreateLabel("อัพเดต 31/10/2025")
 creditTab2:CreateLabel("Discord: dSyCsRpU62")
 
@@ -685,4 +685,4 @@ player.CharacterAdded:Connect(function(c)
     Rayfield:LoadConfiguration()
 end)
 
-Rayfield:Notify({Title="Load Successful", Content="Let's fun with Demon Cheats!", Duration=4, Image=6026568198
+Rayfield:Notify({Title="โหลดสำเร็จ!", Content="พร้อมลุย ไลฟ์สาระ ไปวันๆ!", Duration=4, Image=6026568198})
