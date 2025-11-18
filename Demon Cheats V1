@@ -2,10 +2,10 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 -- สร้าง Window
 local Window = Rayfield:CreateWindow({
-   Name = "Demon Cheats V3",
+   Name = "ไลฟ์สาระ ไปวันๆ v2.0",
    Icon = nil,
-   LoadingTitle = "Welcome to Demon Cheats!",
-   LoadingSubtitle = "Demon Cheats team",
+   LoadingTitle = "ยินดีต้อนรับ Power Panel v2.0 สคริปต์ของไลฟ์สาระ ไปวันๆ",
+   LoadingSubtitle = "power panel team",
    ShowText = "Rayfield",
    Theme = "DarkBlue",
    ToggleUIKeybind = "K",
@@ -21,15 +21,15 @@ local Window = Rayfield:CreateWindow({
       Invite = "noinvitelink",
       RememberJoins = true
    },
-   KeySystem = true,
+   KeySystem = false,
    KeySettings = {
-      Title = "Key System",
-      Subtitle = "Paid Key",
-      Note = "Buy Key from Demon Cheats team!",
+      Title = "ระบบคีย์",
+      Subtitle = "ไปหาซื้อคีย์มาใส่",
+      Note = "No method of obtaining the key is provided",
       FileName = "Key",
       SaveKey = true,
       GrabKeyFromSite = false,
-      Key = {"DEMON-YTOK"}
+      Key = {"Hello"}
    }
 })
 
@@ -559,39 +559,7 @@ local function refreshLocations()
     local folder = Workspace:FindFirstChild("Map") and Workspace.Map:FindFirstChild("Landmarks")
     
     if folder then
-        for _, landm
-    local cloned = cloneref(item)
-
-    startDragging:FireServer(cloned)
-    RunService.Heartbeat:Wait() -- เผื่อให้สถานะลากเซิร์ฟเวอร์เซ็ตทัน
-
-    local pos = (hrp.CFrame * CFrame.new(0, 0, -offsetDistance)).Position
-
-    task.spawn(function()
-        if cloned:IsA("BasePart") then
-            cloned.CFrame = CFrame.new(pos)
-        elseif cloned:IsA("Model") and cloned.PrimaryPart then
-            cloned:SetPrimaryPartCFrame(CFrame.new(pos))
-        end
-    end)
-
-    task.wait(0.05)
-    stopDragging:FireServer(cloned)
-    return true
-end
-
--- ===== UI =====
-local tab = Window:CreateTab("ดึงของเข้าตัว", 0)
-
--- 1) Dropdown รายชื่อไอเทม
-local options  = getSortedItemNames()
-local selected = asString(options[1])
-if selected == "(ไม่มีไอเทมใน Items)" then
-    selected = nil
-end
-
-local dropdown = tab:CreateDropdown({
-    Name = "เลือกไอเทม (ทั้งหมด เรียง A→Z)",
+        for _, landm    Name = "เลือกไอเทม (ทั้งหมด เรียง A→Z)",
     Options = options,
     CurrentOption = options[1],
     Multiple = false,
@@ -748,9 +716,9 @@ extraTab:CreateButton({Name = "Infinity Yild", Callback = function() loadstring(
 
 -- === เครดิต ===
 local creditTab2 = Window:CreateTab("เครดิต")
-creditTab2:CreateLabel("owner by DemonScripts Channel")
-creditTab2:CreateLabel("original script by DemonScripts")
-creditTab2:CreateLabel("พัฒนาต่อโดย Demon Cheats team")
+creditTab2:CreateLabel("owner by livezala")
+creditTab2:CreateLabel("original script by dion_ktl")
+creditTab2:CreateLabel("พัฒนาต่อโดย thomas (โทมัส)")
 creditTab2:CreateLabel("อัพเดต 31/10/2025")
 creditTab2:CreateLabel("Discord: dSyCsRpU62")
 
@@ -801,4 +769,4 @@ player.CharacterAdded:Connect(function(c)
     Rayfield:LoadConfiguration()
 end)
 
-Rayfield:Notify({Title="Load Successful!", Content="Let's Fun with Demon Cheats!", Duration=4, Image=6026568198})
+Rayfield:Notify({Title="โหลดสำเร็จ!", Content="พร้อมลุย ไลฟ์สาระ ไปวันๆ!", Duration=4, Image=6026568198})
