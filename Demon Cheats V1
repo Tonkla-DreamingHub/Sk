@@ -2,10 +2,10 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 -- สร้าง Window
 local Window = Rayfield:CreateWindow({
-   Name = "Demon Cheats V3",
+   Name = "ไลฟ์สาระ ไปวันๆ v2.0",
    Icon = nil,
-   LoadingTitle = "Welcome to Demon Cheats!",
-   LoadingSubtitle = "Demon Cheats team",
+   LoadingTitle = "ยินดีต้อนรับ Power Panel v2.0 สคริปต์ของไลฟ์สาระ ไปวันๆ",
+   LoadingSubtitle = "power panel team",
    ShowText = "Rayfield",
    Theme = "DarkBlue",
    ToggleUIKeybind = "K",
@@ -21,15 +21,15 @@ local Window = Rayfield:CreateWindow({
       Invite = "noinvitelink",
       RememberJoins = true
    },
-   KeySystem = true,
+   KeySystem = false,
    KeySettings = {
-      Title = "Key System",
-      Subtitle = "Paid Key",
-      Note = "Buy Key from Demon Cheats team!",
+      Title = "ระบบคีย์",
+      Subtitle = "ไปหาซื้อคีย์มาใส่",
+      Note = "No method of obtaining the key is provided",
       FileName = "Key",
       SaveKey = true,
       GrabKeyFromSite = false,
-      Key = {"DEMON-YTOK"}
+      Key = {"Hello"}
    }
 })
 
@@ -730,141 +730,6 @@ killAuraTab:CreateSlider({
         killAuraRange = val
     end,
 })
-
--- Label สถิติ
-local statusLabel = killAuraTab:CreateLabel("Kills: 0 | Range: 150 | Speed: 0.03s | Weapon: Ready")
-
--- Reset Stats
-killAuraTab:CreateButton({
-    Name = "🔄 Reset Stats",
-    Callback = function()
-        killAuraCount = 0
-        statusLabel:Set("Kills: 0 | Range: " .. killAuraRange .. " | Speed: " .. killAuraHitDelay .. "s | Weapon: Ready")
-    end,
-})
-
--- ตรวจสอบ Inventory
-killAuraTab:CreateButton({
-    Name = "📋 ตรวจสอบ Inventory (15 อาวุธ)",
-    Callback = function()
-        local inv = player:FindFirstChild("Inventory")
-        if not inv then return Rayfield:Notify({Title="❌ Error", Content="ไม่พบ Inventory", Duration=3}) end
-        
-        local found = 0
-        for _, wName in ipairs(allWeapons) do
-            if inv:FindFirstChild(wName) then found += 1 end
-        end
-        
-        Rayfield:Notify({
-            Title = "Inventory Scan",
-            Content = "พบ " .. found .. "/15 อาวุธ",
-            Duration = 4
-        })
-    end,
-})
-
--- === Kill Aura Loop (ปรับ Speed แล้ว) ===
-task.spawn(function()
-    while task.wait() do
-        if not killAuraEnabled then 
-            statusLabel:Set("Kills: " .. killAuraCount .. " | Range: " .. killAuraRange .. " | OFF")
-            task.wait(0.5)  -- ลด load เมื่อปิด
-            continue 
-        end
-        
-        local weapon
-        if selectedMode == "Auto (Priority)" then
-            weapon = getWeapon()
-        elseif selectedMode == "All Weapons (Random)" then
-            local available = {}
-            for _, wName in ipairs(allWeapons) do
-                local w = player.Inventory:FindFirstChild(wName)
-                if w then table.insert(available, w) end
-            end
-            if #available > 0 then weapon = available[math.random(1, #available)] end
-        else
-            local targetName = selectedMode:match("Only") and selectedMode:gsub(" Only", "")
-            weapon = player.Inventory:FindFirstChild(targetName)
-        end
-        
-        local myChar = player.Character
-        if not myChar or not myChar:FindFirstChild("HumanoidRootPart") or not weapon then 
-            statusLabel:Set("Kills: " .. killAuraCount .. " | ❌ ไม่พบอาวุธ")
-            continue 
-        end
-        
-        local myHRP = myChar.HumanoidRootPart
-        statusLabel:Set("Kills: " .. killAuraCount .. " | Range: " .. killAuraRange .. " | Speed: " .. killAuraHitDelay .. "s | " .. weapon.Name)
-        
-        -- Loop ตี (ใช้ delay ใหม่)
-        for _, v in ipairs(Characters:GetChildren()) do
-            if v:IsA("Model") and v ~= myChar and v:FindFirstChild("HumanoidRootPart") and not v.Name:find(" Body") then
-                local dist = (v.HumanoidRootPart.Position - myHRP.Position).Magnitude
-                if dist <= killAuraRange then
-                    killAuraCount += 1
-                    damage(v, weapon)
-                    statusLabel:Set("Kills: " .. killAuraCount .. " | ⚔️ ATTACKING")
-                    task.wait(killAuraHitDelay)  -- <<<< ที่นี่! ปรับความเร็วตี
-                end
-            end
-        end
-    end
-end)
-
--- Auto Equip
-killAuraTab:CreateToggle({
-    Name = "🔧 Auto Equip",
-    CurrentValue = false,
-    Flag = "AutoEquip",
-    Callback = function(bool)
-        task.spawn(function()
-            while bool do
-                task.wait(0.5)
-                local weapon = getWeapon()
-                if weapon and player.Character then
-                    local humanoid = player.Character:FindFirstChild("Humanoid")
-                    if humanoid then humanoid:EquipTool(weapon) end
-                end
-            end
-        end)
-    end,
-})
-
-Rayfield:Notify({
-    Title = "✅ เพิ่ม Attack Speed!",
-    Content = "ปรับ '⚡ ความเร็วตี' ในเมนูได้เลย (0.01=เร็วสุด)",
-    Duration = 5,
-    Image = 6026568198
-})
-
--- [ใส่ตรงส่วนบนสุดของสคริปต์]
-local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local LocalPlayer = Players.LocalPlayer
-
--- Chop Aura Variables
-local chopAuraToggle = false
-local auraRadius = 100          -- ค่าเริ่มต้น
-local chopDelay = 0.3           -- ความเร็วตี (วินาที)
-local currentAmount = 0
-
-local toolsDamageIDs = {
-    ["Old Axe"] = "3_7367831688",
-    ["Good Axe"] = "112_7367831688",
-    ["Strong Axe"] = "116_7367831688"
-}
-
-local function getAxeTool()
-    for toolName, _ in pairs(toolsDamageIDs) do
-        local tool = LocalPlayer:FindFirstChild("Inventory") and LocalPlayer.Inventory:FindFirstChild(toolName)
-        if tool then
-            return tool
-        end
-    end
-    return nil
-end
-
 local function equipTool(tool)
     if tool then
         pcall(function()
@@ -898,19 +763,26 @@ local function chopAuraLoop()
         equipTool(tool)
 
         local trees = {}
-        local map = Workspace:FindFirstChild("Map")
-        if not map then continue end
 
-        -- รวบรวมต้นไม้ทั้งหมด
-        for _, folder in pairs({map:FindFirstChild("Foliage"), map:FindFirstChild("Landmarks")}) do
-            if folder then
-                for _, obj in ipairs(folder:GetChildren()) do
-                    if obj.Name == "Small Tree" and obj:IsA("Model") then
-                        table.insert(trees, obj)
-                    end
-                end
-            end
+local function addTreesFromFolder(folder)
+    if not folder then return end
+    for _, obj in ipairs(folder:GetChildren()) do
+        if obj:IsA("Model") and (
+            obj:FindFirstChild("TreeClass") or  -- ต้นไม้หลักทั้งหมด
+            obj.Name == "Small Tree" or 
+            obj.Name == "Big Tree" or
+            obj.Name:find("Tree")  -- ชื่อมี Tree ด้วย
+        ) then
+            table.insert(trees, obj)
         end
+    end
+end
+
+local map = Workspace:FindFirstChild("Map")
+if map then
+    addTreesFromFolder(map:FindFirstChild("Foliage"))
+    addTreesFromFolder(map:FindFirstChild("Landmarks"))
+end
 
         for _, tree in ipairs(trees) do
             if not chopAuraToggle then break end
@@ -1422,13 +1294,83 @@ miscTab:CreateToggle({
     end
 })
 
--- แจ้งตอนโหลดเสร็จ
-Rayfield:Notify({
-    Title = "เพิ่มฟังก์ชันใหม่!",
-    Content = "ไปที่แท็บ \"ฟังก์ชันเสริม\" เพื่อใช้ Instant Prompt กับ Anti-AFK",
-    Duration = 6,
-    Image = 6026568198
+
+local instantInteractEnabled = false
+local originalHoldDurations = {}
+local connections = {}
+
+local function setPrompt(prompt, enabled)
+    if not prompt or not prompt.Parent then return end
+    
+    if enabled then
+        if originalHoldDurations[prompt] == nil then
+            originalHoldDurations[prompt] = prompt.HoldDuration
+        end
+        prompt.HoldDuration = 0
+        prompt.MaxActivationDistance = 50   -- ปรับระยะได้ตามใจ
+        prompt.RequiresLineOfSight = false  -- ไม่ต้องมองเห็นก็กดได้ (โหดสุด)
+    else
+        if originalHoldDurations[prompt] ~= nil then
+            prompt.HoldDuration = originalHoldDurations[prompt]
+            prompt.MaxActivationDistance = 10
+            prompt.RequiresLineOfSight = true
+        end
+    end
+end
+
+local function enableInstant()
+    if connections.enabled then return end
+    
+    -- 1. แก้ไข Prompt ที่มีอยู่แล้วทั้งหมดทันที
+    for _, prompt in ipairs(workspace:GetDescendants()) do
+        if prompt:IsA("ProximityPrompt") then
+            setPrompt(prompt, true)
+        end
+    end
+
+    -- 2. ตรวจจับ Prompt ใหม่ที่เกิดขึ้นในอนาคต (สำคัญมาก!)
+    connections.added = workspace.DescendantAdded:Connect(function(obj)
+        if obj:IsA("ProximityPrompt") and instantInteractEnabled then
+            task.wait() -- รอให้มันสร้างเสร็จก่อน
+            setPrompt(obj, true)
+        end
+    end)
+    
+    connections.enabled = true
+end
+
+local function disableInstant()
+    if not connections.enabled then return end
+    
+    for prompt, _ in pairs(originalHoldDurations) do
+        if prompt and prompt.Parent then
+            setPrompt(prompt, false)
+        end
+    end
+        originalHoldDurations = {}
+    
+    if connections.added then
+        connections.added:Disconnect()
+        connections.added = nil
+    end
+    
+    connections.enabled = false
+end
+
+-- Toggle หลัก
+miscTab:CreateToggle({
+    Name = "Instant Interact (ลื่นสุด ไม่กระตุก)",
+    CurrentValue = false,
+    Callback = function(state)
+        instantInteractEnabled = state
+        if state then
+            enableInstant()
+        else
+            disableInstant()
+        end
+    end,
 })
+
 
 -- === แท็บสคริปต์เพิ่มเติม ===
 local extraTab = Window:CreateTab("Script ค่ายอื่นๆ")
@@ -1438,9 +1380,9 @@ extraTab:CreateButton({Name = "Infinity Yild", Callback = function() loadstring(
 
 -- === เครดิต ===
 local creditTab2 = Window:CreateTab("เครดิต")
-creditTab2:CreateLabel("owner by DemonScripts")
-creditTab2:CreateLabel("original script by DemonScripts channel")
-creditTab2:CreateLabel("พัฒนาต่อโดย Demon Cheats team")
+creditTab2:CreateLabel("owner by livezala")
+creditTab2:CreateLabel("original script by dion_ktl")
+creditTab2:CreateLabel("พัฒนาต่อโดย thomas (โทมัส)")
 creditTab2:CreateLabel("อัพเดต 31/10/2025")
 creditTab2:CreateLabel("Discord: dSyCsRpU62")
 
@@ -1491,4 +1433,4 @@ player.CharacterAdded:Connect(function(c)
     Rayfield:LoadConfiguration()
 end)
 
-Rayfield:Notify({Title="Load Successful!", Content="Let's fun with Demon Cheats!", Duration=4, Image=6026568198})
+Rayfield:Notify({Title="โหลดสำเร็จ!", Content="พร้อมลุย ไลฟ์สาระ ไปวันๆ!", Duration=4, Image=6026568198})
