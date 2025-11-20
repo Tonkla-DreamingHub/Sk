@@ -2,12 +2,12 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 -- สร้าง Window
 local Window = Rayfield:CreateWindow({
-   Name = "ไลฟ์สาระ ไปวันๆ v2.0",
+   Name = "Demon Cheats V3",
    Icon = nil,
-   LoadingTitle = "ยินดีต้อนรับ Power Panel v2.0 สคริปต์ของไลฟ์สาระ ไปวันๆ",
-   LoadingSubtitle = "power panel team",
+   LoadingTitle = "Welcome to Demon Cheats!",
+   LoadingSubtitle = "Demon Cheats team",
    ShowText = "Rayfield",
-   Theme = "DarkBlue",
+   Theme = "Default",
    ToggleUIKeybind = "K",
    DisableRayfieldPrompts = true,
    DisableBuildWarnings = true,
@@ -21,15 +21,15 @@ local Window = Rayfield:CreateWindow({
       Invite = "noinvitelink",
       RememberJoins = true
    },
-   KeySystem = false,
+   KeySystem = true,
    KeySettings = {
-      Title = "ระบบคีย์",
-      Subtitle = "ไปหาซื้อคีย์มาใส่",
-      Note = "No method of obtaining the key is provided",
+      Title = "Key System",
+      Subtitle = "Paid Key",
+      Note = "Buy key from Demon Cheats team",
       FileName = "Key",
       SaveKey = true,
       GrabKeyFromSite = false,
-      Key = {"Hello"}
+      Key = {"DEMON-IMLOPU"}
    }
 })
 
@@ -953,7 +953,7 @@ end
 end
 
 -- สร้าง Tab ใหม่ใน Rayfield
-local ChopTab = Winb("ตัดไม้") -- ไอคอนขวาน
+local ChopTab = Window:CreateTab("ตัดไม้") -- ไอคอนขวาน
 
 local Toggle = ChopTab:CreateToggle({
     Name = "Enable Chop Aura",
@@ -965,7 +965,12 @@ local Toggle = ChopTab:CreateToggle({
             task.spawn(chopAuraLoop)
             Notify("Chop Aura เปิดแล้ว!", 3)
         else
-            Notify("Chop Aura ปิดแล้ว", 2)ocal RadiusSlider = ChopTab:CreateSlider({
+            Notify("Chop Aura ปิดแล้ว", 2)
+        end
+    end,
+})
+
+local RadiusSlider = ChopTab:CreateSlider({
     Name = "ระยะตี (Studs)",
     Range = {100, 100},
     Increment = 10,
@@ -1319,9 +1324,9 @@ extraTab:CreateButton({Name = "Infinity Yild", Callback = function() loadstring(
 
 -- === เครดิต ===
 local creditTab2 = Window:CreateTab("เครดิต")
-creditTab2:CreateLabel("owner by livezala")
-creditTab2:CreateLabel("original script by dion_ktl")
-creditTab2:CreateLabel("พัฒนาต่อโดย thomas (โทมัส)")
+creditTab2:CreateLabel("owner by DemonScripts")
+creditTab2:CreateLabel("original script by DemonScripts Channel")
+creditTab2:CreateLabel("พัฒนาต่อโดย Demon Cheats team")
 creditTab2:CreateLabel("อัพเดต 31/10/2025")
 creditTab2:CreateLabel("Discord: dSyCsRpU62")
 
@@ -1529,4 +1534,4 @@ ChopTab:CreateToggle({
     end
 })
 
-Rayfield:Notify({Title="โหลดสำเร็จ!", Content="พร้อมลุย ไลฟ์สาระ ไปวันๆ!", Duration=4, Image=6026568198})
+Rayfield:Notify({Title="Load Successful!", Content="Let's Fun with Demon Cheats!", Duration=4, Image=6026568198})
