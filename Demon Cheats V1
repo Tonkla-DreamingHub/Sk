@@ -2,10 +2,10 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 -- สร้าง Window
 local Window = Rayfield:CreateWindow({
-   Name = "Demon Cheats V3",
+   Name = "ไลฟ์สาระ ไปวันๆ v2.0",
    Icon = nil,
-   LoadingTitle = "Welcome to Demon Cheats!",
-   LoadingSubtitle = "Demon Cheats team",
+   LoadingTitle = "ยินดีต้อนรับ Power Panel v2.0 สคริปต์ของไลฟ์สาระ ไปวันๆ",
+   LoadingSubtitle = "power panel team",
    ShowText = "Rayfield",
    Theme = "DarkBlue",
    ToggleUIKeybind = "K",
@@ -634,7 +634,7 @@ local Characters = Workspace:WaitForChild("Characters")
 
 -- รายการอาวุธทั้งหมด (15 ชิ้น)
 local allWeapons = {
-    "Scythe","Spear","Infernal Sword", "Morningstar", "Katana", "Laser Sword", "Ice Sword",
+    "Scythe", "Spear", "Infernal Sword", "Morningstar", "Katana", "Laser Sword", "Ice Sword",
     "Trident", "Poison Spear", "Infernal Sword", "Cultist King Mace",
     "Obsidiron Hammer", "Scythe", "Vampire Scythe", "Old Axe", "Strong Axe", "Good Axe"
 }
@@ -643,8 +643,8 @@ local allWeapons = {
 local function getWeapon()
     if not player:FindFirstChild("Inventory") then return nil end
     
-    local priorityWeapons = {"Scythe","Infernal Sword","Strong Axe","Good Axe", "Vampire Scythe", "Laser Sword", "Infernal Sword", "Ice Sword", "Poison Spear"}
-    local normalWeapons = {"Katana", "Spear", "Trident", "Scythe", "Morningstar", "Old Axe", "Cultist King Mace", "Obsidiron Hammer"}
+    local priorityWeapons = {"Scythe", "Infernal Sword", "Strong Axe", "Good Axe", "Vampire Scythe", "Laser Sword", "Infernal Sword", "Ice Sword", "Poison Spear","Katana", "Spear", "Trident", "Scythe", "Morningstar", "Old Axe", "Cultist King Mace"}
+    local normalWeapons = {"Obsidiron Hammer"}
     
     for _, weaponName in ipairs(priorityWeapons) do
         local weapon = player.Inventory:FindFirstChild(weaponName)
@@ -730,6 +730,141 @@ killAuraTab:CreateSlider({
         killAuraRange = val
     end,
 })
+
+-- Label สถิติ
+local statusLabel = killAuraTab:CreateLabel("Kills: 0 | Range: 150 | Speed: 0.03s | Weapon: Ready")
+
+-- Reset Stats
+killAuraTab:CreateButton({
+    Name = "🔄 Reset Stats",
+    Callback = function()
+        killAuraCount = 0
+        statusLabel:Set("Kills: 0 | Range: " .. killAuraRange .. " | Speed: " .. killAuraHitDelay .. "s | Weapon: Ready")
+    end,
+})
+
+-- ตรวจสอบ Inventory
+killAuraTab:CreateButton({
+    Name = "📋 ตรวจสอบ Inventory (15 อาวุธ)",
+    Callback = function()
+        local inv = player:FindFirstChild("Inventory")
+        if not inv then return Rayfield:Notify({Title="❌ Error", Content="ไม่พบ Inventory", Duration=3}) end
+        
+        local found = 0
+        for _, wName in ipairs(allWeapons) do
+            if inv:FindFirstChild(wName) then found += 1 end
+        end
+        
+        Rayfield:Notify({
+            Title = "Inventory Scan",
+            Content = "พบ " .. found .. "/15 อาวุธ",
+            Duration = 4
+        })
+    end,
+})
+
+-- === Kill Aura Loop (ปรับ Speed แล้ว) ===
+task.spawn(function()
+    while task.wait() do
+        if not killAuraEnabled then 
+            statusLabel:Set("Kills: " .. killAuraCount .. " | Range: " .. killAuraRange .. " | OFF")
+            task.wait(0.5)  -- ลด load เมื่อปิด
+            continue 
+        end
+        
+        local weapon
+        if selectedMode == "Auto (Priority)" then
+            weapon = getWeapon()
+        elseif selectedMode == "All Weapons (Random)" then
+            local available = {}
+            for _, wName in ipairs(allWeapons) do
+                local w = player.Inventory:FindFirstChild(wName)
+                if w then table.insert(available, w) end
+            end
+            if #available > 0 then weapon = available[math.random(1, #available)] end
+        else
+            local targetName = selectedMode:match("Only") and selectedMode:gsub(" Only", "")
+            weapon = player.Inventory:FindFirstChild(targetName)
+        end
+        
+        local myChar = player.Character
+        if not myChar or not myChar:FindFirstChild("HumanoidRootPart") or not weapon then 
+            statusLabel:Set("Kills: " .. killAuraCount .. " | ❌ ไม่พบอาวุธ")
+            continue 
+        end
+        
+        local myHRP = myChar.HumanoidRootPart
+        statusLabel:Set("Kills: " .. killAuraCount .. " | Range: " .. killAuraRange .. " | Speed: " .. killAuraHitDelay .. "s | " .. weapon.Name)
+        
+        -- Loop ตี (ใช้ delay ใหม่)
+        for _, v in ipairs(Characters:GetChildren()) do
+            if v:IsA("Model") and v ~= myChar and v:FindFirstChild("HumanoidRootPart") and not v.Name:find(" Body") then
+                local dist = (v.HumanoidRootPart.Position - myHRP.Position).Magnitude
+                if dist <= killAuraRange then
+                    killAuraCount += 1
+                    damage(v, weapon)
+                    statusLabel:Set("Kills: " .. killAuraCount .. " | ⚔️ ATTACKING")
+                    task.wait(killAuraHitDelay)  -- <<<< ที่นี่! ปรับความเร็วตี
+                end
+            end
+        end
+    end
+end)
+
+-- Auto Equip
+killAuraTab:CreateToggle({
+    Name = "🔧 Auto Equip",
+    CurrentValue = false,
+    Flag = "AutoEquip",
+    Callback = function(bool)
+        task.spawn(function()
+            while bool do
+                task.wait(0.5)
+                local weapon = getWeapon()
+                if weapon and player.Character then
+                    local humanoid = player.Character:FindFirstChild("Humanoid")
+                    if humanoid then humanoid:EquipTool(weapon) end
+                end
+            end
+        end)
+    end,
+})
+
+Rayfield:Notify({
+    Title = "✅ เพิ่ม Attack Speed!",
+    Content = "ปรับ '⚡ ความเร็วตี' ในเมนูได้เลย (0.01=เร็วสุด)",
+    Duration = 5,
+    Image = 6026568198
+})
+
+-- [ใส่ตรงส่วนบนสุดของสคริปต์]
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LocalPlayer = Players.LocalPlayer
+
+-- Chop Aura Variables
+local chopAuraToggle = false
+local auraRadius = 100          -- ค่าเริ่มต้น
+local chopDelay = 0.3           -- ความเร็วตี (วินาที)
+local currentAmount = 0
+
+local toolsDamageIDs = {
+    ["Old Axe"] = "3_7367831688",
+    ["Good Axe"] = "112_7367831688",
+    ["Strong Axe"] = "116_7367831688"
+}
+
+local function getAxeTool()
+    for toolName, _ in pairs(toolsDamageIDs) do
+        local tool = LocalPlayer:FindFirstChild("Inventory") and LocalPlayer.Inventory:FindFirstChild(toolName)
+        if tool then
+            return tool
+        end
+    end
+    return nil
+end
+
 local function equipTool(tool)
     if tool then
         pcall(function()
@@ -857,198 +992,6 @@ local SpeedSlider = ChopTab:CreateSlider({
     Callback = function(Value)
         chopDelay = Value
     end,
-})
-
--- ==============================
--- STRONGHOLD AUTO TELEPORT (แก้ปัญหาไม่วาร์ป + กันวาร์ปรัว)
--- ==============================
-local StrongholdTab = Window:CreateTab("ปราสาทเพชร")
-
-local LevelColors = {
-    [1] = Color3.fromRGB(195, 255, 0),
-    [2] = Color3.fromRGB(255, 238, 0),
-    [3] = Color3.fromRGB(255, 157, 0),
-    [4] = Color3.fromRGB(255, 64, 0),
-    [5] = Color3.fromRGB(255, 0, 0)
-}
-
-local LastStronghold = nil
-local LastUpdateTime = 0
-local UPDATE_INTERVAL = 0.3  -- เช็คถี่ขึ้น
-local CountdownEnabled = true
-local AutoTeleportEnabled = true
-local LastTeleportKey = nil   -- ✅ กันวาร์ปซ้ำในรอบเดียว
-
-local StatusLabel = StrongholdTab:CreateLabel("กำลังค้นหา Stronghold...")
-local InfoLabel = StrongholdTab:CreateLabel("ระดับ: -\nสถานะ: รอเปิด\nเหลือเวลา: --:--")
-
--- Toggles
-StrongholdTab:CreateToggle({
-    Name = "เปิดใช้งาน Stronghold Countdown",
-    CurrentValue = true,
-    Callback = function(val)
-        CountdownEnabled = val
-    end
-})
-
-StrongholdTab:CreateToggle({
-    Name = "🚀 AUTO TELEPORT (วาร์ปทันที)",
-    CurrentValue = true,
-    Callback = function(val)
-        AutoTeleportEnabled = val
-    end
-})
-
--- ปุ่มทดสอบวาร์ป (สำคัญมาก!)
-StrongholdTab:CreateButton({
-    Name = "🧪 ทดสอบวาร์ป (กดตอนเจอ SH)",
-    Callback = function()
-        ManualTeleport()
-    end
-})
-
--- ฟังก์ชันวาร์ปที่เสถียร 100%
-function ManualTeleport()
-    if not LastStronghold then
-        Rayfield:Notify({Title = "❌", Content = "ยังไม่เจอ Stronghold", Duration = 3})
-        return
-    end
-
-    print("🔥 เริ่มวาร์ป Stronghold:", LastStronghold.Name)
-
-    -- หาตำแหน่งปลอดภัยหลายวิธี
-    local targetPos
-    local func = LastStronghold:FindFirstChild("Functional")
-
-    -- วิธี 1: PrimaryPart
-    if LastStronghold.PrimaryPart then
-        targetPos = LastStronghold.PrimaryPart.CFrame + Vector3.new(0, 15, 10)
-    end
-
-    -- วิธี 2: Functional.Position (สำรอง)
-    if func and not targetPos then
-        targetPos = CFrame.new(func.Position + Vector3.new(0, 20, 15))
-    end
-
-    -- วิธี 3: หา Part ใหญ่สุด
-    if not targetPos then
-        for _, part in pairs(LastStronghold:GetChildren()) do
-            if part:IsA("BasePart") and part.Size.Magnitude > 10 then
-                targetPos = part.CFrame + Vector3.new(0, 15, 10)
-                break
-            end
-        end
-    end
-
-    if not targetPos then
-        Rayfield:Notify({Title = "❌", Content = "หาตำแหน่งไม่ได้", Duration = 3})
-        return
-    end
-
-    -- รอ Character พร้อม
-    local player = game.Players.LocalPlayer
-    local char = player.Character or player.CharacterAdded:Wait()
-    local root = char:WaitForChild("HumanoidRootPart", 5)
-
-    if root then
-        -- วาร์ปแบบเนียน
-        root.CFrame = targetPos
-        Rayfield:Notify({
-            Title = "🚀 วาร์ปสำเร็จ!",
-            Content = "ไป Stronghold แล้ว! 🎉",
-            Duration = 4
-        })
-        print("✅ วาร์ปสำเร็จ:", targetPos.Position)
-    else
-        Rayfield:Notify({Title = "❌", Content = "Character ไม่พร้อม", Duration = 3})
-    end
-end
-
--- ฟังก์ชันอัปเดตหลัก
-local function UpdateStronghold()
-    if not CountdownEnabled then return end
-
-    local now = tick()
-    if now - LastUpdateTime < UPDATE_INTERVAL then return end
-    LastUpdateTime = now
-
-    local sh = nil
-
-    -- ค้นหา Stronghold
-    if LastStronghold and LastStronghold.Parent and LastStronghold:FindFirstChild("Functional") then
-        sh = LastStronghold
-    else
-        for _, obj in workspace:GetDescendants() do
-            if obj:IsA("Model") and obj:FindFirstChild("Functional") and obj:HasTag("Stronghold") and obj.Name ~= "AlienMothership" then
-                sh = obj
-                LastStronghold = sh
-                break
-            end
-        end
-    end
-
-    if not sh then
-        StatusLabel:Set("❌ ไม่พบ Stronghold")
-        InfoLabel:Set("รอ Stronghold เกิดใหม่...")
-        return
-    end
-
-    local func = sh.Functional
-    local openTime = func:GetAttribute("OpenTime")
-    local level = func:GetAttribute("Level") or 1
-
-    if not openTime then return end
-
-    local timeLeft = openTime - workspace:GetServerTimeNow()
-    local timeStr, statusText
-
-    -- ✅ ใช้ key กันวาร์ปรอบเดิม
-    local teleportKey = tostring(sh:GetDebugId()) .. "|" .. tostring(openTime)
-
-    -- 🔥 AUTO TELEPORT แค่ครั้งเดียวต่อรอบ
-    if timeLeft <= 0 and AutoTeleportEnabled then
-        statusText = "✅ เปิดแล้ว!"
-
-        if LastTeleportKey ~= teleportKey then
-            -- ยังไม่เคยวาร์ปรอบนี้ -> วาร์ปเลย
-            LastTeleportKey = teleportKey
-            timeStr = "🚀 กำลังวาร์ป..."
-
-            task.spawn(function()
-                ManualTeleport()
-            end)
-        else
-            -- วาร์ปไปแล้วรอบนี้
-            timeStr = "✅ วาร์ปแล้ว รอรอบถัดไป"
-        end
-    else
-        statusText = "⏳ รอเปิด"
-        local mins = math.floor(timeLeft / 60)
-        local secs = math.floor(timeLeft % 60)
-        if timeLeft <= 30 then
-            timeStr = string.format("%d", secs)
-        else
-            timeStr = string.format("%d:%02d", mins, secs)
-        end
-    end
-
-    -- อัปเดต UI
-    StatusLabel:Set("Stronghold Lv." .. level .. " | AutoTP: " .. (AutoTeleportEnabled and "✅" or "❌"))
-    InfoLabel:Set(string.format("ระดับ: %d\n%s\nเหลือ: %s", level, statusText, timeStr))
-    InfoLabel.TextColor3 = LevelColors[level] or Color3.fromRGB(255, 0, 0)
-end
-
--- ลูปหลัก
-game:GetService("RunService").Heartbeat:Connect(function()
-    pcall(UpdateStronghold)
-end)
-
-UpdateStronghold()
-
-Rayfield:Notify({
-    Title = "🔥 Stronghold Auto TP พร้อม!",
-    Content = "เจอ SH แล้วกด '🧪 ทดสอบวาร์ป' ทดสอบก่อนได้",
-    Duration = 6
 })
 
 -- === Drag Items (EZ) + Quantity (Simple UI) ===
@@ -1347,7 +1290,8 @@ local function disableInstant()
             setPrompt(prompt, false)
         end
     end
-        originalHoldDurations = {}
+    
+    originalHoldDurations = {}
     
     if connections.added then
         connections.added:Disconnect()
@@ -1380,9 +1324,9 @@ extraTab:CreateButton({Name = "Infinity Yild", Callback = function() loadstring(
 
 -- === เครดิต ===
 local creditTab2 = Window:CreateTab("เครดิต")
-creditTab2:CreateLabel("owner by DemonScripts")
-creditTab2:CreateLabel("original script by DemonScripts Channel")
-creditTab2:CreateLabel("พัฒนาต่อโดย Demon Cheats team")
+creditTab2:CreateLabel("owner by livezala")
+creditTab2:CreateLabel("original script by dion_ktl")
+creditTab2:CreateLabel("พัฒนาต่อโดย thomas (โทมัส)")
 creditTab2:CreateLabel("อัพเดต 31/10/2025")
 creditTab2:CreateLabel("Discord: dSyCsRpU62")
 
@@ -1433,4 +1377,161 @@ player.CharacterAdded:Connect(function(c)
     Rayfield:LoadConfiguration()
 end)
 
-Rayfield:Notify({Title="Load Successful!", Content="Let's Fun with Demon Cheats!", Duration=4, Image=6026568198})
+-- === หลอด HP ต้นไม้แบบเรียบ (ไม่มีตัวเลข) ===
+local TreeHPToggle = false
+local TreeHPConnections = {}
+local TreeHPGuis = {}
+
+local function CreateTreeHPBar(tree)
+    if not tree or TreeHPGuis[tree] then return end
+    
+    local trunk = tree:FindFirstChild("Trunk")
+    if not trunk then return end
+    
+    local bill = Instance.new("BillboardGui")
+    bill.Name = "TreeHPBar"
+    bill.Adornee = trunk
+    bill.Size = UDim2.new(3, 0, 0.6, 0)  -- เล็กกว่าก่อน
+    bill.StudsOffset = Vector3.new(0, 4, 0)
+    bill.AlwaysOnTop = true
+    bill.LightInfluence = 0
+    bill.Parent = trunk
+    
+    local frame = Instance.new("Frame", bill)
+    frame.Size = UDim2.new(1, 0, 1, 0)
+    frame.BackgroundTransparency = 0.3
+    frame.BackgroundColor3 = Color3.new(0, 0, 0)
+    frame.BorderSizePixel = 0
+    frame.ClipsDescendants = true
+    
+    local corner1 = Instance.new("UICorner", frame)
+    corner1.CornerRadius = UDim.new(0, 6)
+    
+    local fill = Instance.new("Frame", frame)
+    fill.Name = "Fill"
+    fill.Size = UDim2.new(1, 0, 1, 0)
+    fill.Position = UDim2.new(0, 0, 0, 0)
+    fill.BackgroundColor3 = Color3.fromRGB(0, 255, 100)  -- เขียวเต็ม
+    fill.BorderSizePixel = 0
+    
+    local corner2 = Instance.new("UICorner", fill)
+    corner2.CornerRadius = UDim.new(0, 4)
+    
+    TreeHPGuis[tree] = {Billboard = bill, Fill = fill, Frame = frame}
+end
+
+local function UpdateTreeHPBar(tree)
+    local guiData = TreeHPGuis[tree]
+    if not guiData then return end
+    
+    local currentHP = tree:GetAttribute("Health") or 0
+    local maxHP = tree:GetAttribute("MaxHealth") or 100
+    local percent = math.clamp(currentHP / maxHP, 0, 1)
+    
+    -- ลดหลอดเรียลไทม์ + เปลี่ยนสี
+    guiData.Fill.Size = UDim2.new(percent, 0, 1, 0)
+    guiData.Fill:TweenSize(UDim2.new(percent, 0, 1, 0), "Out", "Quad", 0.1, true)
+    
+    -- สีหลอดตาม HP (เขียว → เหลือง → ส้ม → แดง)
+    if percent > 0.7 then
+        guiData.Fill.BackgroundColor3 = Color3.fromRGB(0, 255, 100)
+    elseif percent > 0.4 then
+        guiData.Fill.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+    elseif percent > 0.2 then
+        guiData.Fill.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+    else
+        guiData.Fill.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    end
+end
+
+local function EnableTreeHP()
+    if TreeHPToggle then return end
+    TreeHPToggle = true
+    
+    -- สร้างหลอดให้ต้นไม้ทั้งหมดที่มีอยู่
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("Model") and 
+           (obj:FindFirstChild("TreeClass") or 
+            obj.Name:find("Tree") or 
+            obj.Name == "Small Tree" or 
+            obj.Name == "Big Tree") and 
+           obj:FindFirstChild("Trunk") then
+            CreateTreeHPBar(obj)
+        end
+    end
+    
+    -- ติดตามต้นไม้ใหม่
+    TreeHPConnections.Added = workspace.DescendantAdded:Connect(function(obj)
+        if not TreeHPToggle then return end
+        task.wait(0.2)
+        if obj:IsA("Model") and 
+           (obj:FindFirstChild("TreeClass") or obj.Name:find("Tree")) and 
+           obj:FindFirstChild("Trunk") then
+            CreateTreeHPBar(obj)
+        end
+    end)
+    
+    -- อัปเดต HP เรียลไทม์ (ลดตอนตี)
+    TreeHPConnections.Update = game:GetService("RunService").Heartbeat:Connect(function()
+        if not TreeHPToggle then return end
+        for tree, _ in pairs(TreeHPGuis) do
+            if tree and tree.Parent and tree:FindFirstChild("Trunk") then
+                UpdateTreeHPBar(tree)
+            else
+                -- ลบหลอดถ้าต้นไม้หาย
+                if TreeHPGuis[tree] then
+                    TreeHPGuis[tree].Billboard:Destroy()
+                    TreeHPGuis[tree] = nil
+                end
+            end
+        end
+    end)
+    
+    Rayfield:Notify({
+        Title = "🌳 เปิดหลอด HP ต้นไม้!", 
+        Content = "หลอดลดเรียลไทม์ตอนตี (ไม่มีตัวเลข)", 
+        Duration = 3,
+        Image = 6026568198
+    })
+end
+
+local function DisableTreeHP()
+    if not TreeHPToggle then return end
+    TreeHPToggle = false
+    
+    -- ลบหลอดทั้งหมด
+    for _, data in pairs(TreeHPGuis) do
+        if data.Billboard then 
+            data.Billboard:Destroy() 
+        end
+    end
+    TreeHPGuis = {}
+    
+    -- ตัด Connection
+    for _, conn in pairs(TreeHPConnections) do
+        if conn then conn:Disconnect() end
+    end
+    TreeHPConnections = {}
+    
+    Rayfield:Notify({
+        Title = "🌳 ปิดหลอด HP ต้นไม้", 
+        Content = "หลอดหายหมดแล้ว", 
+        Duration = 2
+    })
+end
+
+-- 🔥 เพิ่ม Toggle ในแท็บ "ตัดไม้" (ChopTab)
+ChopTab:CreateToggle({
+    Name = "🌳 หลอด HP ต้นไม้ (เรียบ - ลดตอนตี)",
+    CurrentValue = false,
+    Flag = "TreeHPBar",
+    Callback = function(val)
+        if val then
+            EnableTreeHP()
+        else
+            DisableTreeHP()
+        end
+    end
+})
+
+Rayfield:Notify({Title="โหลดสำเร็จ!", Content="พร้อมลุย ไลฟ์สาระ ไปวันๆ!", Duration=4, Image=6026568198})
