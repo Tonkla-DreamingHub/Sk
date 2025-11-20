@@ -953,7 +953,7 @@ end
 end
 
 -- สร้าง Tab ใหม่ใน Rayfield
-local ChopTab = Window:CreateTab("ตัดไม้") -- ไอคอนขวาน
+local ChopTab = Winb("ตัดไม้") -- ไอคอนขวาน
 
 local Toggle = ChopTab:CreateToggle({
     Name = "Enable Chop Aura",
@@ -965,12 +965,7 @@ local Toggle = ChopTab:CreateToggle({
             task.spawn(chopAuraLoop)
             Notify("Chop Aura เปิดแล้ว!", 3)
         else
-            Notify("Chop Aura ปิดแล้ว", 2)
-        end
-    end,
-})
-
-local RadiusSlider = ChopTab:CreateSlider({
+            Notify("Chop Aura ปิดแล้ว", 2)ocal RadiusSlider = ChopTab:CreateSlider({
     Name = "ระยะตี (Studs)",
     Range = {100, 100},
     Increment = 10,
