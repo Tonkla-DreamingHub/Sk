@@ -88,7 +88,7 @@ local function toggleSpeed(on)
 end
 
 -- === แท็บตัวละคร ===
-local MainTab = Window:CreateTab("ใช้บ่อย")
+local MainTab = Window:CreateTab("ทั่วไป")
 local UserInputService = game:GetService("UserInputService")
 local godmodeToggled = false
 
