@@ -1340,8 +1340,7 @@ miscTab:CreateToggle({
 local extraTab = Window:CreateTab("Script ค่ายอื่นๆ")
 extraTab:CreateButton({Name = "Script SomTank", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/MQPS7/99-Night-in-the-Forset/refs/heads/main/99v5"))() end})
 extraTab:CreateButton({Name = "Script Foxname Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/FoxnameHub.lua"))() end})
-extraTab:CreateButton({Name = "Infinity Yild", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))() end})
-
+extraTab:CreateButton({Name = "ออโต้ฟาร์มเพชร", Callback = function() loadstring(game:HttpGet('https://raw.githubusercontent.com/MQPS7/99-Night-in-the-Forset/refs/heads/main/Gfarm'))() end})
 -- === เครดิต ===
 local creditTab2 = Window:CreateTab("เครดิต")
 creditTab2:CreateLabel("owner by DemonScripts")
