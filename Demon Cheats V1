@@ -2,7 +2,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 -- สร้าง Window
 local Window = Rayfield:CreateWindow({
-   Name = "Demon Cheats V3",
+   Name = "Demon Cheats",
    Icon = nil,
    LoadingTitle = "Welcome to Demon Cheats!",
    LoadingSubtitle = "Demon Cheats team",
